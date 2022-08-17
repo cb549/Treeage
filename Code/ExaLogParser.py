@@ -1,5 +1,4 @@
 from pandas import read_csv,isna
-import re
 
 '''
 Description: Extracts scoring events from the event log csv
@@ -19,7 +18,8 @@ def getScoringEvents(path):
         if isna(event["Risk Reason"]):
             continue
         else:
-            scoringEvents.append(event)
+            # dropna() is used to remove null values from the data
+            scoringEvents.append(event.dropna())
     return scoringEvents
 
 '''
@@ -46,7 +46,7 @@ def filterScoringEvents(scoringEvents):
     # Sort the list by the score key
     scoringEvents.sort(key=lambda x: x.Score, reverse=True)
 
-    index = 1
+    index = 0
     print("Option\t\tScore\t\tRisk Reason")
     for event in scoringEvents:
         print("[" + str(index) + "]\t\t" + str(event["Score"]) + "\t\t" + event["Risk Reason"])
@@ -66,8 +66,7 @@ def filterScoringEvents(scoringEvents):
             # Lower bound of range must be less then the upper bound
             selectionsset = selectionsset.union(set([ val for val in range(r[0],r[1]+1) ] if r[0] < r[1] else []))
     selections = list(selectionsset)
-    # dropna() is used to remove null values from the data
-    selectedEvents = [ scoringEvents[index].dropna() for index in selections ]
+    selectedEvents = [ scoringEvents[index] for index in selections ]
     return selectedEvents
 
 

@@ -1,10 +1,11 @@
 from Code.ExaLogParser import *
 from argparse import ArgumentParser
 from pathlib import Path
-from os import listdir
+from os import listdir,remove
 
 parser = ArgumentParser()
 parser.add_argument("-d", "--directory", help="Change the default directory of the log file")
+parser.add_argument("-k", "--keep", help="Keep the .csv file after the script concludes (Default is to remove it).", action="store_true")
 args = parser.parse_args()
 
 path = args.directory
@@ -28,5 +29,9 @@ if not path:
 
 scoringEvents = getScoringEvents(path)
 selectedEvents = filterScoringEvents(scoringEvents)
+# print(selectedEvents)
 for event in selectedEvents:
     print(event["Risk Reason"])
+# Delete the log file after using it if the -k flag is not used
+if not args.keep:
+    remove(path)
